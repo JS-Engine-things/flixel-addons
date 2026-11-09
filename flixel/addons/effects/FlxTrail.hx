@@ -17,7 +17,7 @@ import flixel.math.FlxPoint;
  * Feel free to use this class and adjust it to your needs.
  * @author Gama11
  */
-class FlxTrail extends #if (flixel < "5.7.0") FlxSpriteGroup #else FlxSpriteContainer #end
+class FlxTrail extends FlxSpriteContainer
 {
 	/**
 	 * Stores the FlxSprite the trail is attached to.
@@ -244,7 +244,8 @@ class FlxTrail extends #if (flixel < "5.7.0") FlxSpriteGroup #else FlxSpriteCont
 	function cacheValue<T>(array:Array<T>, value:T)
 	{
 		array.unshift(value);
-		FlxArrayUtil.setLength(array, _trailLength);
+		if (array.length > _trailLength)
+			array.resize(_trailLength);
 	}
 
 	public function resetTrail():Void
