@@ -10,9 +10,6 @@ import openfl.net.URLRequestMethod;
 import haxe.crypto.Md5;
 import haxe.crypto.Sha1;
 import flixel.FlxG;
-#if flash
-import flash.Lib;
-#end
 
 /**
  * Similar to FlxKongregate, this allows access to the GameJolt API. Based loosely on the AS3 version by SumYungGai with many changes.
@@ -103,13 +100,6 @@ class FlxGameJolt
 	 * @return	True if this was run via Quick Play with user name and token available, false otherwise.
 	 */
 	public static var isQuickPlay(get, never):Bool;
-
-	/**
-	 * An alternative to running authUser() and hoping for the best; this will tell you if your game was run as an embedded Flash on GameJolt that has user name and token data already. Does NOT authenticate the user data!
-	 *
-	 * @return	True if it's an embedded SWF with user name and token available, false otherwise.
-	 */
-	public static var isEmbeddedFlash(get, never):Bool;
 
 	/**
 	 * Internal storage for a callback function, used when the URLLoader is complete.
@@ -208,7 +198,7 @@ class FlxGameJolt
 			{
 				authUser(UserName, UserToken, Callback);
 			}
-			else if ((UserName == null || UserToken == null) && (isEmbeddedFlash || isQuickPlay))
+			else if ((UserName == null || UserToken == null) && isQuickPlay)
 			{
 				authUser(null, null, Callback);
 			}
@@ -291,18 +281,6 @@ class FlxGameJolt
 				{
 					_userToken = argArray[1];
 				}
-			}
-			#elseif flash
-			var parameters = Lib.current.loaderInfo.parameters;
-
-			if (parameters.gjapi_username != null)
-			{
-				_userName = parameters.gjapi_username;
-			}
-
-			if (parameters.gjapi_token != null)
-			{
-				_userToken = parameters.gjapi_token;
 			}
 			#end
 		}
@@ -971,18 +949,5 @@ class FlxGameJolt
 		}
 		return false;
 		#end
-	}
-
-	static function get_isEmbeddedFlash():Bool
-	{
-		#if flash
-		var parameters = Lib.current.loaderInfo.parameters;
-		if (parameters.gjapi_username != null && parameters.gjapi_token != null)
-		{
-			return true;
-		}
-		#end
-
-		return false;
 	}
 }
